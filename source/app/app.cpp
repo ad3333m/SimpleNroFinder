@@ -542,7 +542,7 @@ void App::DrawReleases() {
 
         const Release& r = releases[relSel];
         Text::Draw(r.name.empty() ? r.tag : r.name, right.x + 16, right.y + 14, Face::Bold, 18, th.textStrong, right.w - 32);
-        Text::Draw(Str::Format("%zu files", r.assets.size()), right.x + 16, right.y + 40, Face::Regular, 13, th.textMuted);
+        Text::Draw(Str::Format("%zu file%s", r.assets.size(), r.assets.size() == 1 ? "" : "s"), right.x + 16, right.y + 40, Face::Regular, 13, th.textMuted);
         const float topY = right.y + 68;
         Gfx::FillRect(Rect{right.x + 16, topY - 10, right.w - 32, 1}, th.border);
         const float arowH = 56;
