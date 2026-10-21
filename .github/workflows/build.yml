@@ -36,11 +36,14 @@ jobs:
           SNF_SHOT=preview/3-package.bmp SNF_OPEN=1 ./build/simplenrofinder
           SNF_SHOT=preview/4-github.bmp SNF_SEARCH=switch-lite-duck SNF_OPEN=1 ./build/simplenrofinder
           ls -la preview
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: preview
-          path: preview/
+      - name: Publish previews
+        # Release assets, not artifacts: the account's artifact quota is full.
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view preview >/dev/null 2>&1 ||             gh release create preview --prerelease --title "UI previews" --notes "Desktop renders from CI."
+          gh release upload preview preview/*.bmp --clobber
 
   switch:
     name: Switch nro
@@ -55,10 +58,6 @@ jobs:
           $DEVKITPRO/portlibs/switch/bin/aarch64-none-elf-pkg-config --exists sdl2 freetype2 libcurl libwebp
       - name: Build
         run: make -j$(nproc)
-      - uses: actions/upload-artifact@v4
-        with:
-          name: SimpleNroFinder
-          path: SimpleNroFinder.nro
       - name: Publish
         if: github.ref == 'refs/heads/main'
         env:
